@@ -1,4 +1,4 @@
-const Cardapio = require('../models/Cardapio') ();
+const Cardapio = require('../models/Cardapio');
 
 const controller = {};
 
@@ -6,91 +6,69 @@ controller.get = function(req, res) {
 
     const id = req.params.id;
 
-    Cardapio.findById(id).exec().then(
-
-        function(cardapio) {
-            if(cardapio) {
-                res.json(cardapio).end();
-            } else {
-                res.sendStatus(404).end();
-            }
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
+    Cardapio.listOne(id, (erro, result) => {
+        if(erro){
+            res.sendStatus(400).end();
+            console.log(erro);
+            //throw erro;
+        } else {
+            res.json(result).end();
         }
-    );
+    })
 }
 
 controller.getAll = function(req, res) {
-
-    Cardapio.find().exec().then(
-        function(cardapios) {
-            res.json(cardapios);
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
+    Cardapio.listAll((erro, resultCardapios)=>{
+        if(erro){
+            throw erro;
+        } else{
+            res.json(resultCardapios).end();
         }
-    );
+    });
 }
 
 controller.post = function(req, res) {
 
-    Cardapio.create(req.body).then(
-
-        function() {
+    const cardapio = req.body;
+    console.log(cardapio);
+    Cardapio.create(cardapio, (erro, result) => {
+        if(erro){
+            res.sendStatus(400).end();
+            throw erro;
+        } else {
             res.sendStatus(201).end();
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
         }
-    );
+    });
 }
 
 controller.put = function(req, res) {
 
-    const id = req.body._id;
-
-    Cardapio.findOneAndUpdate({_id: id}, req.body).exec().then(
-
-        function(cardapio) {
-            if(cardapio){
-                res.sendStatus(204).end();
-            } else {
-                res.sendStatus(404).end();
-            }
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
+    const cardapio = req.body;
+    console.log(cardapio);
+    Cardapio.update(cardapio, (erro, result) => {
+        if(erro){
+            res.sendStatus(400).end();
+            throw erro;
+        } else {
+            res.sendStatus(200).end();
         }
-    );
+    });
+    
 }
 
 controller.delete = function(req, res) {
 
-    const id = req.params.id;
-
-    Cardapio.findOneAndDelete({_id: id}).exec().then(
-        function(cardapio) {
-            if(cardapio) {
-                res.sendStatus(204).end();
-            } else {
-                res.sendStatus(404).end();
-            }
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
+    const _id = req.params.id;
+    Cardapio.delete(_id, (erro, result) =>{
+        if(erro){
+            console.log(erro);
+            res.sendStatus(400).end();
+            throw erro;
+        } else {
+            res.sendStatus(200).end();
         }
-    );
+    })
+    
 }
 
 module.exports = controller;

@@ -1,5 +1,4 @@
-const Troca = require('../models/Troca') ();
-const emailService = require('../services/email.service');
+const Troca = require('../models/Troca');
 
 const controller = {};
 
@@ -7,103 +6,71 @@ controller.get = function(req, res) {
 
     const id = req.params.id;
 
-    Troca.findById(id).exec().then(
-
-        function(troca) {
-            if(troca) {
-                res.json(troca).end();
-            } else {
-                res.sendStatus(404).end();
-            }
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
+    Troca.findOne(id, (erro, result) => {
+        if (erro) {
+            throw erro;
+        } else {
+            console.log("get "+result);
+            res.json(result).end;
         }
-    );
+    }); 
 }
 
 controller.getUser = function(req, res) {
     
-    Troca.find(req.body).exec().then(
-        function(usuarios) {
-            res.json(usuarios);
-        },
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
+    Troca.findUser(req.body.user, (erro, result) => {
+        if(erro){
+            throw erro;
+        } else {
+            console.log("getUser " + result);
+            res.json(result);
         }
-    );
+    });
 }
 
 controller.getAll = function(req, res) {
+    Troca.list((erro, result) => {
+        if(erro){
+            throw erro;
+        } else {
+            console.log("get all "+ result["0"]);
+            resposta = [];
+            Object.keys(result).map(item => resposta.push(result[item]));
 
-    Troca.find().populate('user', 'nome').populate('cardapio', 'data').exec().then(
-        function(trocas) {
-            res.json(trocas);
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
+            console.log(resposta);
+            res.json(resposta);
         }
-    );
+    });
 }
+controller.post = async function(req, res) {
 
-controller.post = function(req, res) {
-    Troca.create(req.body).then(
-        function() {
-            emailService.send('diegorugue@gmail.com', 'Troca do cardapio', global.EMAIL_TMPL2.replace('{0}', req.body.user).replace('{1}', req.body.pratoPrincipal));
-            res.sendStatus(201).end();
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
-        }
-    );
+    Troca.create({user: req.body.user,
+                            cardapio: req.body.cardapio,
+                            pratoPrincipal: req.body.pratoPrincipal}, (erro, result) => {
+                                if(erro){
+                                    throw erro;
+                                } else {
+                                    console.log("post "+ result);
+                                        res.sendStatus(201).end();
+                                }
+                            });
+       
+    
 }
 
 controller.put = function(req, res) {
-
-    const id = req.body._id;
-
-    Troca.findOneAndUpdate({_id: id}, req.body).exec().then(
-
-        function(troca) {
-            if(troca){
-                res.sendStatus(204).end();
-            } else {
-                res.sendStatus(404).end();
-            }
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
+    let troca = req.body;
+    Troca.update({user: req.body.user,
+                  cardapio: req.body.cardapio,
+                  pratoPrincipal: req.body.pratoPrincipal,
+                  _id: req.body.id}, (erro, result) => {
+        if(erro){
+            throw erro;
+        } else {
+            console.log("put "+result);
+            res.sendStatus(200);
         }
-    );
-}
-
-controller.delete = function(req, res) {
-
-    const id = req.params.id;
-
-    Troca.findOneAndDelete({_id: id}).exec().then(
-        function(troca) {
-            if(troca) {
-                res.sendStatus(204).end();
-            } else {
-                res.sendStatus(404).end();
-            }
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
-        }
-    );
+    });
 }
 
 module.exports = controller;

@@ -1,3 +1,4 @@
+/*
 const mongoose = require('mongoose');
 
 module.exports = function(uri) {
@@ -22,3 +23,29 @@ module.exports = function(uri) {
       });
    });   
 }
+
+*/
+
+const mysql = require('mysql');
+
+const client = {}
+
+client.connect = () =>{
+   let database = 'dados191n'
+   var mysqlConnection = mysql.createConnection({
+      host:'localhost',
+      user:'root',
+      password:'senha123',
+      database: database
+   });
+
+   mysqlConnection.connect((error) => {
+      if(!error) console.log('Conectado com sucesso a dados191n');
+      else console.log(JSON.stringify(error, undefined, 2));
+   });
+   mysqlConnection.query('USE ' + database);
+   return mysqlConnection;
+}
+
+module.exports = client;
+

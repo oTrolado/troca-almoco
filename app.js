@@ -9,7 +9,8 @@ const config = require('./config/config');
 
 const db = require('./config/database');
 //db('mongodb://127.0.0.1:27017/cardapio-db');
-db(config.connectionString);
+//db(config.connectionString); //mongodb
+db.connect();
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -26,5 +27,8 @@ app.use('/cardapio', cardapio);
 
 const troca = require('./routes/troca.route');
 app.use('/troca', troca);
+
+const feedback = require('./routes/feedback.route');
+app.use('/feedback', feedback);
 
 module.exports = app;

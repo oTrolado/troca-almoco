@@ -1,36 +1,15 @@
-const mongoose = require('mongoose');
+const client = require('./../config/database.js');
 
-module.exports = function() {
-    const schema = mongoose.Schema({
-        nome: {
-            type: String,
-            required: true
-        },
-        user: {
-            type: String,
-            required: true,
-            trim: true,
-            index: true,
-            unique: true
-        },
-        email: {
-            type: String,
-            required: true,
-            trim: true,
-            index: true,
-            unique: true
-        },
-        senha: {
-            type: String,
-            required: true,
-            trim: true
-        },
-        admin: {
-            type: Boolean,
-            default: false
-        }
-    });
+const model = {};
 
-    return mongoose.model('Usuario', schema, 'usuarios');
-
+model.findOne = (user, callback) => {
+    client.connect().query('SELECT * FROM gaiaUsuarios WHERE user = "' + user +'"', callback);
 }
+
+model.create = (usuario, callback) => {
+    console.log(usuario);
+    let insert = " INSERT INTO gaiaUsuarios (user, nome, senha, email, admin) VALUES('"+ usuario.user +"','"+ usuario.nome +"', '"+ usuario.senha +"', '"+ usuario.email +"', "+ false +")";
+    client.connect().query(insert, callback);
+}
+
+module.exports = model;
