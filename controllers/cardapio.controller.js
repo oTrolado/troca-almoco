@@ -22,6 +22,7 @@ controller.getAll = function(req, res) {
         if(erro){
             throw erro;
         } else{
+            console.log(resultCardapios);
             res.json(resultCardapios).end();
         }
     });

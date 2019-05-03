@@ -35,7 +35,7 @@ client.connect = () =>{
    var mysqlConnection = mysql.createConnection({
       host:'localhost',
       user:'root',
-      password:'senha123',
+      password:'fatec123*',
       database: database
    });
 

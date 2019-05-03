@@ -1,4 +1,4 @@
-const Feedback = require('../models/Feedback') ();
+const Feedback = require('../models/Feedback');
 
 const controller = {};
 
@@ -6,91 +6,42 @@ controller.get = function(req, res) {
 
     const id = req.params.id;
 
-    Feedback.findById(id).exec().then(
-
-        function(feedback) {
-            if(feedback) {
-                res.json(feedback).end();
-            } else {
-                res.sendStatus(404).end();
-            }
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
-        }
-    );
+    res.sendStatus(404).end();
 }
 
 controller.getAll = function(req, res) {
 
-    Feedback.find().exec().then(
-        function(feedbacks) {
-            res.json(feedbacks);
-        },
-
-        function(e) {
-            console.error(e);
+    Feedback.findAll((erro,result) => {
+        if(erro){
+            throw erro;
             res.sendStatus(500).end();
+        } else {
+            res.json(result).end();
         }
-    );
+    });
 }
 
 controller.post = function(req, res) {
 
-    Feedback.create(req.body).then(
-
-        function() {
+    Feedback.create(req.body, (erro, result) => {
+        if(erro){
+            throw erro;
+        } else {
             res.sendStatus(201).end();
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
         }
-    );
+    });
 }
 
 controller.put = function(req, res) {
 
-    const id = req.body._id;
-
-    Feedback.findOneAndUpdate({_id: id}, req.body).exec().then(
-
-        function(Feedback) {
-            if(Feedback){
-                res.sendStatus(204).end();
-            } else {
-                res.sendStatus(404).end();
-            }
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
-        }
-    );
+    res.sendStatus(404).end()
 }
 
 controller.delete = function(req, res) {
 
     const id = req.params.id;
 
-    Feedback.findOneAndDelete({_id: id}).exec().then(
-        function(feedback) {
-            if(feedback) {
-                res.sendStatus(204).end();
-            } else {
-                res.sendStatus(404).end();
-            }
-        },
-
-        function(e) {
-            console.error(e);
-            res.sendStatus(500).end();
-        }
-    );
+    Feedback.delete();
 }
 
 module.exports = controller;

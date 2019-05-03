@@ -11,7 +11,7 @@ controller.get = function(req, res) {
             throw erro;
         } else {
             console.log("get "+result);
-            res.json(result).end;
+            res.json(result).end();
         }
     }); 
 }
@@ -23,7 +23,7 @@ controller.getUser = function(req, res) {
             throw erro;
         } else {
             console.log("getUser " + result);
-            res.json(result);
+            res.json(result).end();
         }
     });
 }
@@ -38,11 +38,11 @@ controller.getAll = function(req, res) {
             Object.keys(result).map(item => resposta.push(result[item]));
 
             console.log(resposta);
-            res.json(resposta);
+            res.json(resposta).end();
         }
     });
 }
-controller.post = async function(req, res) {
+controller.post = function(req, res) {
 
     Troca.create({user: req.body.user,
                             cardapio: req.body.cardapio,
@@ -63,12 +63,13 @@ controller.put = function(req, res) {
     Troca.update({user: req.body.user,
                   cardapio: req.body.cardapio,
                   pratoPrincipal: req.body.pratoPrincipal,
-                  _id: req.body.id}, (erro, result) => {
+                  _id: req.body._id}, (erro, result) => {
         if(erro){
             throw erro;
+            console.log(erro);
         } else {
             console.log("put "+result);
-            res.sendStatus(200);
+            res.sendStatus(201).end();
         }
     });
 }
